@@ -3,6 +3,16 @@
     // rate value = 1;
 // rate = 180% with holiday
     // rate value = (value * .80) + value.
+// range hour to consume.
+    // open - 8:30am
+        /* depending on the day of the week */
+        // 8:30 - 12:30 ratePorcent = 10%
+        // 12:30 - 14:30 ratePorcent = 15%
+        // 14:30 - 17:30 ratePorcent = 20%
+        // 17:30 - 20:30 ratePorcent = 17%
+        // 20:30 - 21:50 ratePorcent = 12% 
+    // close - 22:00
+
 
 // data to do configuration
 // =================================
