@@ -7,4 +7,6 @@ function get_info_all(){
     
 }
 
-
+function get_holydays(){
+    
+}
