@@ -1,9 +1,18 @@
+// porcents
+// rate = 100% wihtout holiday // to quantity of consume
+    // rate value = 1;
+// rate = 180% with holiday
+    // rate value = (value * .80) + value.
+
 // data to do configuration
+// =================================
+// 
 let toDate = new Date();
 let optionsToDate = {
     weekday: 'long'
 };
 var nameOfDay = toDate.toLocaleDateString('es-MX', optionsToDate);
+/// =================================
 
 // get data from apis
 var _xmlHttpRequest = new XMLHttpRequest();
@@ -19,9 +28,9 @@ function init(){
     },1500);
     */
     get_holydays();
-    console.log('day: '+nameOfDay);
-    console.log(toDate.getHours());
-    console.log('rate: ' + get_rate());
+    console.log('Day: '+nameOfDay);
+    console.log('Hour: '+toDate.getHours());
+    console.log('Rate: ' + get_rate());
    
 }
 
@@ -43,31 +52,31 @@ function get_holydays(){
 
 
 function get_rate(){
-    var rate = 0;
+    var rate = 1;
     switch (nameOfDay) {
         case 'domingo':
-            rate = 2.3;
+            rate = 3.3;
             break;
         case 'lunes':
-            rate = 0.4;
+            rate = 1.4;
             break;
         case 'martes':
-            rate = 0.6
+            rate = 1.6
             break;
         case 'miércoles':
-            rate = 0.7;
+            rate = 1.7;
             break;
         case 'jueves':
-            rate = 0.8
+            rate = 1.8
             break;
         case 'viernes':
-            rate = 1.5;
+            rate = 2.5;
             break;
         case 'sabado':
-            rate = 1.9;
+            rate = 3;
             break;
         default:
-            rate = 0.2;
+            rate = 1.2;
             break;
     }
     return rate;
