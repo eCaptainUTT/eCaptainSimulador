@@ -13,6 +13,10 @@
         // 20:30 - 21:50 ratePorcent = 12% 
     // close - 22:00
 
+// generate to count of peopel
+    // get hour and get day to generate people
+
+/* equation */
 
 // data to do configuration
 // =================================
