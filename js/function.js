@@ -2,7 +2,7 @@
 // rate = 100% wihtout holiday // to quantity of consume
     // rate value = 1;
 // rate = 180% with holiday
-    // rate value = (value * .80) + value.
+    // rate value = (value * 1.80) + value.
 // range hour to consume.
     // open - 8:30am
         /* depending on the day of the week */
@@ -30,7 +30,7 @@ var nameOfDay = toDate.toLocaleDateString('es-MX', optionsToDate);
 
 // get data from apis
 var _xmlHttpRequest = new XMLHttpRequest();
-var holiday_api = "http://localhost/ecaptainSimulador/apis/hapi.php";
+var holiday_api = "http://localhost:8080/ecaptainSimulador/apis/hapi.php";
 
 // main Function.
 function init(){

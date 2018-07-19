@@ -1,0 +1,271 @@
+-- MySQL Administrator dump 1.4
+--
+-- ------------------------------------------------------
+-- Server version	5.5.21
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+
+--
+-- Create schema ecaptain
+--
+
+CREATE DATABASE IF NOT EXISTS ecaptain;
+USE ecaptain;
+
+--
+-- Definition of table `containers`
+--
+
+DROP TABLE IF EXISTS `containers`;
+CREATE TABLE `containers` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `number_on_island` int(10) unsigned NOT NULL,
+  `capacity` double(8,2) NOT NULL,
+  `island_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `containers_island_id_foreign` (`island_id`),
+  CONSTRAINT `containers_island_id_foreign` FOREIGN KEY (`island_id`) REFERENCES `islands` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `containers`
+--
+
+/*!40000 ALTER TABLE `containers` DISABLE KEYS */;
+INSERT INTO `containers` (`id`,`number_on_island`,`capacity`,`island_id`,`created_at`,`updated_at`) VALUES 
+ (1,1,5.00,1,'2018-04-12 03:20:06','2018-04-12 03:20:06');
+/*!40000 ALTER TABLE `containers` ENABLE KEYS */;
+
+
+--
+-- Definition of table `containers_status`
+--
+
+DROP TABLE IF EXISTS `containers_status`;
+CREATE TABLE `containers_status` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `actual_weight` double NOT NULL,
+  `container_id` int(10) unsigned NOT NULL,
+  `dish_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `containers_status_container_id_foreign` (`container_id`),
+  KEY `containers_status_dish_id_foreign` (`dish_id`),
+  CONSTRAINT `containers_status_container_id_foreign` FOREIGN KEY (`container_id`) REFERENCES `containers` (`id`),
+  CONSTRAINT `containers_status_dish_id_foreign` FOREIGN KEY (`dish_id`) REFERENCES `dishes` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `containers_status`
+--
+
+/*!40000 ALTER TABLE `containers_status` DISABLE KEYS */;
+INSERT INTO `containers_status` (`id`,`actual_weight`,`container_id`,`dish_id`,`created_at`,`updated_at`) VALUES 
+ (1,2,1,1,'2018-04-12 03:23:58','2018-04-12 03:23:58'),
+ (2,2,1,1,'2018-04-12 03:24:02','2018-04-12 03:24:02'),
+ (3,2,1,1,'2018-04-12 03:24:03','2018-04-12 03:24:03'),
+ (4,2.5,1,1,'2018-04-12 03:45:49','2018-04-12 03:45:49'),
+ (5,2.5,1,1,'2018-04-17 00:33:42','2018-04-17 00:33:42'),
+ (6,2.5,1,1,'2018-04-17 00:44:59','2018-04-17 00:44:59'),
+ (7,2.5,1,1,'2018-04-17 00:47:01','2018-04-17 00:47:01'),
+ (8,2.5,1,1,'2018-04-17 00:47:43','2018-04-17 00:47:43'),
+ (9,7,1,1,'2018-04-17 01:03:39','2018-04-17 01:03:39'),
+ (10,7,1,1,'2018-04-17 01:07:33','2018-04-17 01:07:33'),
+ (11,7,1,1,'2018-04-17 01:14:43','2018-04-17 01:14:43'),
+ (12,2.5,1,1,'2018-04-17 01:38:34','2018-04-17 01:38:34'),
+ (13,2.5,1,1,'2018-04-17 01:39:13','2018-04-17 01:39:13'),
+ (14,2.5,1,1,'2018-04-17 01:40:41','2018-04-17 01:40:41'),
+ (15,2.5,1,1,'2018-04-17 01:42:04','2018-04-17 01:42:04');
+/*!40000 ALTER TABLE `containers_status` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dishes`
+--
+
+DROP TABLE IF EXISTS `dishes`;
+CREATE TABLE `dishes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `dishes`
+--
+
+/*!40000 ALTER TABLE `dishes` DISABLE KEYS */;
+INSERT INTO `dishes` (`id`,`name`,`created_at`,`updated_at`) VALUES 
+ (1,'Arroz','2018-04-12 03:23:53','2018-04-12 03:23:53');
+/*!40000 ALTER TABLE `dishes` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ingredients`
+--
+
+DROP TABLE IF EXISTS `ingredients`;
+CREATE TABLE `ingredients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `ingredients`
+--
+
+/*!40000 ALTER TABLE `ingredients` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ingredients` ENABLE KEYS */;
+
+
+--
+-- Definition of table `islands`
+--
+
+DROP TABLE IF EXISTS `islands`;
+CREATE TABLE `islands` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `capacity` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `islands`
+--
+
+/*!40000 ALTER TABLE `islands` DISABLE KEYS */;
+INSERT INTO `islands` (`id`,`name`,`capacity`,`created_at`,`updated_at`) VALUES 
+ (1,'ISLA COMIDAS',4,'2018-04-12 03:19:13','2018-04-12 03:19:13');
+/*!40000 ALTER TABLE `islands` ENABLE KEYS */;
+
+
+--
+-- Definition of table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `migrations`
+--
+
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+INSERT INTO `migrations` (`id`,`migration`,`batch`) VALUES 
+ (1,'2014_10_12_000000_create_users_table',1),
+ (2,'2014_10_12_100000_create_password_resets_table',1),
+ (3,'2018_04_08_072546_create_dishes_table',1),
+ (4,'2018_04_08_073430_create_islands_table',1),
+ (5,'2018_04_08_073730_create_ingredients_table',1),
+ (6,'2018_04_08_074126_create_containers_table',1),
+ (7,'2018_04_08_082605_create_containers_status_table',1),
+ (8,'2018_04_08_083437_create_recipes_table',1);
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+
+
+--
+-- Definition of table `password_resets`
+--
+
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE `password_resets` (
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+/*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
+
+
+--
+-- Definition of table `recipes`
+--
+
+DROP TABLE IF EXISTS `recipes`;
+CREATE TABLE `recipes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ingredient_quantity` double NOT NULL,
+  `dish_id` int(10) unsigned NOT NULL,
+  `ingredient_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `recipes_dish_id_foreign` (`dish_id`),
+  KEY `recipes_ingredient_id_foreign` (`ingredient_id`),
+  CONSTRAINT `recipes_dish_id_foreign` FOREIGN KEY (`dish_id`) REFERENCES `dishes` (`id`),
+  CONSTRAINT `recipes_ingredient_id_foreign` FOREIGN KEY (`ingredient_id`) REFERENCES `ingredients` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `recipes`
+--
+
+/*!40000 ALTER TABLE `recipes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `recipes` ENABLE KEYS */;
+
+
+--
+-- Definition of table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+
+
+
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
