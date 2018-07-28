@@ -1,48 +1,57 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        
-        <title>Console</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 
-        <script type="text/javascript" src="/ecaptainSimulador/js/function.js"></script>
-    </head>
-    <body onload = "init();" style="margin-top: 2em;">
-        <div class="container">
-            
-            <div class="row">
-                <div class="col-md-12">
-                    <h4 id="total_person" class="float-right"></h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <h4 id="day"></h4>
-                </div>
-                <div class="col-md-3">
-                    <h4 id="holiday"></h4>
-                </div>
-                <div class="col-md-3 mb-5">
-                    <h4 id="hour">00:00:00</h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <h4 id="rate"></h4>
-                </div>
-                <div class="col-md-3">
-                    <h4 id="rateWithFactors"></h4>
-                </div>
-                <div class="col-md-3">
-                    <h4 id="rateTotal"></h4>
-                </div>
+<head>
+
+    <title>Console</title>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script> -->
+    <script src="js/jquery3.3.1.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="js/function.js"></script>
+    <script type="text/javascript" src="js/moment.js"></script>
+    <script type="text/javascript" src="js/models/Client.js"></script>
+
+</head>
+
+<body onload="init();" style="margin-top: 2em;">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <h4 id="total_person" class="float-right"></h4>
             </div>
         </div>
-    </body >
+        <div class="row">
+            <div class="col-md-3">
+                <h4 id="day"></h4>
+            </div>
+            <div class="col-md-3">
+                <h4 id="holiday"></h4>
+            </div>
+            <div class="col-md-3 mb-5">
+                <h4 id="hour">00:00:00</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4 id="rate"></h4>
+            </div>
+            <div class="col-md-3">
+                <h4 id="rateWithFactors"></h4>
+            </div>
+            <div class="col-md-3">
+                <h4 id="rateTotal"></h4>
+            </div>
+        </div>
+    </div>
+</body>
 
-    
+
 </html>
-
