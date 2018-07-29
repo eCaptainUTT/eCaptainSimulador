@@ -121,7 +121,6 @@ function getNewClients() {
         todayRateClients += 1
     }
 
-    let actualHour = moment('2018-05-05 14:04:04').format('H.mm')
     if (actualHour >= 8 && actualHour <= 10) {
         todayProbabilityClients += 5
     }
