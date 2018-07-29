@@ -50,7 +50,7 @@ moment.locale('es-us')
 let MAXIMUM_CLIENTS = 100
 let actualContainers = []
 let actualClients = []
-const MINUTES_TO_UPDATE_CLIENTS = 5
+let MINUTES_TO_UPDATE_CLIENTS = 5
 const PERCENTAGE_TO_MAKE_REFILL = 0.20
 // THE WEEK STARTS ON MONDAY WITH THE INDEX 1
 let rateOfClientsByDay = [/*NO_DAY*/ 0, 1, 1.1, 1.2, 1.4, 1.6, 1.8, 2]
@@ -134,24 +134,31 @@ function getNewClients() {
     let actualHour = moment().format('H.mm')
     if (actualHour >= 8 && actualHour <= 10) {
         todayProbabilityClients += 5
+        MINUTES_TO_UPDATE_CLIENTS = 15
     }
     else if (actualHour >= 10 && actualHour <= 12) {
         todayProbabilityClients += 10
+        MINUTES_TO_UPDATE_CLIENTS = 10
     }
     else if (actualHour >= 12 && actualHour <= 14) {
         todayProbabilityClients += 15
+        MINUTES_TO_UPDATE_CLIENTS = 4
     }
     else if (actualHour >= 14 && actualHour <= 16) {
         todayProbabilityClients += 25
+        MINUTES_TO_UPDATE_CLIENTS = 3
     }
     else if (actualHour >= 16 && actualHour <= 18) {
         todayProbabilityClients += 20
+        MINUTES_TO_UPDATE_CLIENTS = 8
     }
     else if (actualHour >= 18 && actualHour <= 20) {
         todayProbabilityClients += 10
+        MINUTES_TO_UPDATE_CLIENTS = 20
     }
     else if (actualHour >= 20 && actualHour <= 21.30) {
         todayProbabilityClients += 5
+        MINUTES_TO_UPDATE_CLIENTS = 25
     }
     else {
         console.log('Fuera del horario de apertura')
@@ -162,7 +169,7 @@ function getNewClients() {
     actualProbability = todayProbabilityClients
     if (isInRange(getRndInteger(0, 100), 0, todayProbabilityClients)) {
         actualRate = todayRateClients * MAX_CLIENTS
-        let quantityOfNewClients = getRndInteger(0, actualRate)
+        let quantityOfNewClients = getRndInteger(1, actualRate)
         updateStats()
         if (actualClients.length + quantityOfNewClients <= MAXIMUM_CLIENTS && quantityOfNewClients > 0) {
             console.log('Quantity of New Clients :' + quantityOfNewClients)
