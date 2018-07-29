@@ -1,8 +1,8 @@
 let clientNumber = 0;
 
-function Client() {
+function Client(durationMinutes = 30) {
     this.id = ++clientNumber
-    this.DURATION_MINUTES = .25
+    this.DURATION_MINUTES = durationMinutes
     this.arrivalTime = moment()
     this.departureTime = moment().add(this.DURATION_MINUTES, 'minutes')
     this.maximumNumberOfServings = getRndInteger(1, 4)
@@ -22,8 +22,8 @@ Client.prototype.makeConsume = function (idContainer, consumeVal = 0.1) {
         method: 'POST',
         dataType: 'JSON',
         success: function (response) {
-            console.log(idClient + " makeConsume ");
-            console.log(response);
+            // console.log(idClient + " Do Consume ");
+            console.log('CONSUME AL CONTENEDOR : ' + idContainer)
         },
         data: {
             id: idContainer,
@@ -54,7 +54,20 @@ Client.prototype.startInterval = function () {
         } else {
             console.log('Cliente eliminado : ' + id);
             clearInterval(interval)
+            deleteClient(id)
         }
-    }, minutesToSeconds(this.DURATION_MINUTES) / this.maximumNumberOfServings)
+    }, minutesToMiliseconds(this.DURATION_MINUTES) / this.maximumNumberOfServings)
     return interval
+}
+
+function deleteClient(id) {
+    $.each(actualClients, function (i, c) {
+        try {
+            if (c.id == id) {
+                actualClients.splice(i, 1)
+            }
+        } catch (error) {
+            //console.log(error);
+        }
+    })
 }

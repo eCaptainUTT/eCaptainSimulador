@@ -47,10 +47,18 @@
 let MAXIMUM_CLIENTS = 100
 let actualContainers = []
 let actualClients = []
+const MINUTES_TO_UPDATE_CLIENTS = 20
+// THE WEEK STARTS ON MONDAY WITH THE INDEX 1
+let rateOfClientsByDay = [/*NO_DAY*/ 0, 1, 1.1, 1.2, 1.4, 1.6, 1.8, 2]
+
+// THE WEEK STARTS ON MONDAY WITH THE INDEX 1
+let rateOfProbabilityByDay = [/*NO_DAY*/ 0, 15, 20, 25, 30, 35, 40, 45]
+
 /**
  * Load actual dishes from the server every 300000 miliseconds = 5 min
  */
-setInterval(getContainers, 300000)
+setInterval(getContainers, minutesToMiliseconds(5))
+
 
 // data to do configuration
 // =================================
@@ -71,6 +79,7 @@ var _xmlHttpRequest = new XMLHttpRequest();
 var holiday_api = "http://localhost:80/ecaptainSimulador/apis/hapi.php"
 var island_status_api = "http://127.0.0.1:8000/api/v1/island/status/"
 const API_CONSUME = 'http://127.0.0.1:8000/api/v1/container/consume'
+const API_REFILL = 'http://127.0.0.1:8000/api/v1/container/refill'
 
 // main Function.
 function init() {
@@ -79,18 +88,19 @@ function init() {
 
     startTime();
     document.getElementById('day').innerHTML = 'Day: ' + nameOfDay;
-    document.getElementById('holiday').innerHTML = 'isHoliday: ' + get_holydays();
+    document.getElementById('holiday').innerHTML = 'isHoliday: ' + isHoliday();
     document.getElementById('rate').innerHTML = 'Rate: Base ' + rate + '%';
     document.getElementById('rateWithFactors').innerHTML = 'Rate with Factors: 0%';
     document.getElementById('rateTotal').innerHTML = 'Rate Total: 0%';
     document.getElementById('total_person').innerHTML = 'Total people: ' + countPeople;
-    setInterval(function () {
-        get_count_people()
-    }, 120000);
-    setInterval(function () {
-        remove_person()
-    }, 300000);
+    // setInterval(function () {
+    //     get_count_people()
+    // }, 120000);
+    // setInterval(function () {
+    //     remove_person()
+    // }, 300000);
 
+    setInterval(getNewClients, minutesToMiliseconds(MINUTES_TO_UPDATE_CLIENTS))
 }
 
 // get info of Containers from db.
@@ -101,8 +111,62 @@ function get_info_by_island(id) {
 
 }
 
+function getNewClients() {
+    const MAX_CLIENTS = 4
+    let todayRateClients = rateOfClientsByDay[moment().isoWeekday()]
+    let todayProbabilityClients = rateOfProbabilityByDay[moment().isoWeekday()]
+
+    if (isHoliday()) {
+        todayProbabilityClients += 20
+        todayRateClients += 1
+    }
+
+    let actualHour = moment('2018-05-05 14:04:04').format('H.mm')
+    if (actualHour >= 8 && actualHour <= 10) {
+        todayProbabilityClients += 5
+    }
+    else if (actualHour >= 10 && actualHour <= 12) {
+        todayProbabilityClients += 10
+    }
+    else if (actualHour >= 12 && actualHour <= 14) {
+        todayProbabilityClients += 15
+    }
+    else if (actualHour >= 14 && actualHour <= 16) {
+        todayProbabilityClients += 25
+    }
+    else if (actualHour >= 16 && actualHour <= 18) {
+        todayProbabilityClients += 20
+    }
+    else if (actualHour >= 18 && actualHour <= 20) {
+        todayProbabilityClients += 10
+    }
+    else if (actualHour >= 20 && actualHour <= 21.30) {
+        todayProbabilityClients += 5
+    }
+    else {
+        console.log('Fuera del horario de apertura')
+        todayProbabilityClients = 0
+        return false
+    }
+
+    if (isInRange(getRndInteger(0, 100), 0, todayProbabilityClients)) {
+        let quantityOfNewClients = getRndInteger(0, todayRateClients * MAX_CLIENTS)
+        if (actualClients.length + quantityOfNewClients <= MAXIMUM_CLIENTS && quantityOfNewClients > 0) {
+            console.log('Quantity of New Clients :' + quantityOfNewClients)
+            let duration = getRndInteger(20, 60)
+            for (let i = quantityOfNewClients; i > 0; i--) {
+                actualClients.push(new Client(duration))
+            }
+            return true
+        } else {
+            console.log('No se encuentran los suficientes lugares disponibles');
+        }
+    }
+
+}
+
 // get holydays
-function get_holydays() {
+function isHoliday() {
     var isHoliday = false
 
     $.ajax({
@@ -157,7 +221,7 @@ function get_count_people() {
     var addPeople = 0;
     var rateWithFactos = 0;
     var ratewithPeople = 0;
-    if (get_holydays())
+    if (isHoliday())
         rateBase = rateBase + 7;
 
     if (hour >= 8.35 && hour <= 8.40)
@@ -242,23 +306,8 @@ function removeMassivePerson(count) {
 /*
  */
 function startTime() {
-    var today = new Date();
-    var h = today.getHours();
-    var m = today.getMinutes();
-    var s = today.getSeconds();
-    m = checkTime(m);
-    s = checkTime(s);
-    document.getElementById('hour').innerHTML = "Hour: " + h + ":" + m + ":" + s;
-
+    $('#hour').html('Hour: ' + moment().format('h:mm:ss'))
     setTimeout(startTime, 500);
-}
-/**
- * function check nums and add zero
- * @param {any} i
- */
-function checkTime(i) {
-    if (i < 10) { i = "0" + i; }  // add zero in front of numbers < 10
-    return i;
 }
 
 
@@ -287,7 +336,7 @@ function getRndDouble(min = 0, max = 100) {
  * returns the seconds 
  * @param {int} minutes 
  */
-function minutesToSeconds(minutes) {
+function minutesToMiliseconds(minutes) {
     return minutes * 60 * 1000
 }
 
@@ -311,4 +360,51 @@ function getContainers() {
             actualContainers.push(c)
         });
     })
+
+    refillContainers()
+}
+
+/**
+ * Verify if the containers has 15 percent or less , and if has that weight 
+ * do a refill
+ * @author RowerPulido
+ */
+function refillContainers() {
+    $.each(actualContainers, function (i, c) {
+        try {
+            if (c.actual_status.actual_weight <= (c.actual_status.capacity * 0.15)) {
+                $.ajax({
+                    url: API_REFILL,
+                    async: true,
+                    method: 'POST',
+                    dataType: 'JSON',
+                    success: function (response) {
+                        console.log(response)
+                        if (response[0].STATUS == 0) {
+                            console.log('SE HA REALIZADO UN REFILL AL CONTENEDOR ' + c.id)
+                        } else
+                            console.log('ALGO FALLO AL REALIZAR EL REFILL ' + c.id)
+                    },
+                    data: {
+                        id: c.id
+                    }
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+}
+
+
+/**
+ * returns a boolean if the value its on range
+ * 
+ * @param {any} value value to compare
+ * @param {any} from value who starts the range
+ * @param {any} to limit value
+ * @author RowerPulido
+ */
+function isInRange(value, from, to) {
+    return (value >= from && value <= to)
 }
