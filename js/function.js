@@ -44,20 +44,27 @@
 /**
  * @author RowerPulido
  */
+//DEFINE THE LOCALE DATE
+moment.locale('es-us')
+
 let MAXIMUM_CLIENTS = 100
 let actualContainers = []
 let actualClients = []
-const MINUTES_TO_UPDATE_CLIENTS = 20
+const MINUTES_TO_UPDATE_CLIENTS = 5
+const PERCENTAGE_TO_MAKE_REFILL = 0.20
 // THE WEEK STARTS ON MONDAY WITH THE INDEX 1
 let rateOfClientsByDay = [/*NO_DAY*/ 0, 1, 1.1, 1.2, 1.4, 1.6, 1.8, 2]
 
 // THE WEEK STARTS ON MONDAY WITH THE INDEX 1
-let rateOfProbabilityByDay = [/*NO_DAY*/ 0, 15, 20, 25, 30, 35, 40, 45]
-
+let rateOfProbabilityByDay = [/*NO_DAY*/ 0, 20, 25, 30, 35, 40, 45, 50]
+let actualProbability = rateOfProbabilityByDay[moment().isoWeekday()]
+let actualRate = rateOfClientsByDay[moment().isoWeekday()]
 /**
  * Load actual dishes from the server every 300000 miliseconds = 5 min
  */
 setInterval(getContainers, minutesToMiliseconds(5))
+
+setInterval(refillContainers, minutesToMiliseconds(2))
 
 
 // data to do configuration
@@ -87,25 +94,28 @@ function init() {
     getContainers()
 
     startTime();
-    document.getElementById('day').innerHTML = 'Day: ' + nameOfDay;
-    document.getElementById('holiday').innerHTML = 'isHoliday: ' + isHoliday();
-    document.getElementById('rate').innerHTML = 'Rate: Base ' + rate + '%';
-    document.getElementById('rateWithFactors').innerHTML = 'Rate with Factors: 0%';
-    document.getElementById('rateTotal').innerHTML = 'Rate Total: 0%';
-    document.getElementById('total_person').innerHTML = 'Total people: ' + countPeople;
-    // setInterval(function () {
-    //     get_count_people()
-    // }, 120000);
-    // setInterval(function () {
-    //     remove_person()
-    // }, 300000);
+    updateStats()
 
     setInterval(getNewClients, minutesToMiliseconds(MINUTES_TO_UPDATE_CLIENTS))
 }
 
+/**
+ * Update the stats showed on the screen
+ */
+function updateStats() {
+    $('#day').html('Day: ' + moment().format('dddd'));
+    $('#holiday').html('Is Holiday : ' + (isHoliday() ? 'Yes' : 'No'));
+    $('#probability').html('Probability Base: ' + rateOfProbabilityByDay[moment().isoWeekday()] + ' %');
+    $('#probabilityTotal').html('Total Probability: ' + actualProbability + ' %');
+    $('#rateOfClients').html('Rate Base of Clients: ' + rateOfClientsByDay[moment().isoWeekday()])
+    $('#rateTotalOfClients').html('Total Rate of Clients: ' + actualRate)
+    $('#total_person').html('Total Persons: ' + actualClients.length)
+    $('#rateTotalOfClients').hide()
+}
+
 // get info of Containers from db.
-function get_info_by_island(id) {
-    $.getJSON(island_status_api + 1, function (response) {
+function get_info_by_island(id = 1) {
+    $.getJSON(island_status_api + id, function (response) {
         console.log(response)
     })
 
@@ -149,20 +159,24 @@ function getNewClients() {
         return false
     }
 
+    actualProbability = todayProbabilityClients
     if (isInRange(getRndInteger(0, 100), 0, todayProbabilityClients)) {
-        let quantityOfNewClients = getRndInteger(0, todayRateClients * MAX_CLIENTS)
+        actualRate = todayRateClients * MAX_CLIENTS
+        let quantityOfNewClients = getRndInteger(0, actualRate)
+        updateStats()
         if (actualClients.length + quantityOfNewClients <= MAXIMUM_CLIENTS && quantityOfNewClients > 0) {
             console.log('Quantity of New Clients :' + quantityOfNewClients)
             let duration = getRndInteger(20, 60)
             for (let i = quantityOfNewClients; i > 0; i--) {
                 actualClients.push(new Client(duration))
             }
+            updateStats()
             return true
         } else {
+            console.log('New Clients : ' + (actualClients.length + quantityOfNewClients) + 'MAXIMUM_CLIENTS : ' + MAXIMUM_CLIENTS)
             console.log('No se encuentran los suficientes lugares disponibles');
         }
     }
-
 }
 
 // get holydays
@@ -306,7 +320,7 @@ function removeMassivePerson(count) {
 /*
  */
 function startTime() {
-    $('#hour').html('Hour: ' + moment().format('h:mm:ss'))
+    $('#hour').html('Time: ' + moment().format('h:mm:ss'))
     setTimeout(startTime, 500);
 }
 
@@ -365,14 +379,14 @@ function getContainers() {
 }
 
 /**
- * Verify if the containers has 15 percent or less , and if has that weight 
+ * Verify if the containers has the percent or less , and if has that weight 
  * do a refill
  * @author RowerPulido
  */
 function refillContainers() {
     $.each(actualContainers, function (i, c) {
         try {
-            if (c.actual_status.actual_weight <= (c.actual_status.capacity * 0.15)) {
+            if (c.actual_status.actual_weight <= (c.actual_status.capacity * PERCENTAGE_TO_MAKE_REFILL)) {
                 $.ajax({
                     url: API_REFILL,
                     async: true,
