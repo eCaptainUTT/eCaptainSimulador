@@ -84,9 +84,9 @@ var countPeople = 0; //actual Clients
 // get data from apis
 var _xmlHttpRequest = new XMLHttpRequest();
 var holiday_api = "http://localhost:80/ecaptainSimulador/apis/hapi.php"
-var island_status_api = "http://127.0.0.1:8000/api/v1/island/status/"
-const API_CONSUME = 'http://127.0.0.1:8000/api/v1/container/consume'
-const API_REFILL = 'http://127.0.0.1:8000/api/v1/container/refill'
+var island_status_api = "http://142.93.82.45:8000/api/v1/island/status/"
+const API_CONSUME = 'http://142.93.82.45:8000/api/v1/container/consume'
+const API_REFILL = 'http://142.93.82.45:8000/api/v1/container/refill'
 
 // main Function.
 function init() {
@@ -174,8 +174,11 @@ function getNewClients() {
         if (actualClients.length + quantityOfNewClients <= MAXIMUM_CLIENTS && quantityOfNewClients > 0) {
             console.log('Quantity of New Clients :' + quantityOfNewClients)
             let duration = getRndInteger(20, 60)
-            for (let i = quantityOfNewClients; i > 0; i--) {
-                actualClients.push(new Client(duration))
+
+            if (moment().add(duration, 'minute') <= moment().set({ hour: 22, minute: 0 })) {
+                for (let i = quantityOfNewClients; i > 0; i--) {
+                    actualClients.push(new Client(duration))
+                }
             }
             updateStats()
             return true
