@@ -38,7 +38,7 @@ Client.prototype.startInterval = function () {
     var timesServed = this.timesServed
     var makeConsume = this.makeConsume
     var maxNumbOfServings = this.maximumNumberOfServings
-
+    
     var interval = setInterval(function () {
         if (timesServed < maxNumbOfServings) {
             let dishes = 0
@@ -57,6 +57,24 @@ Client.prototype.startInterval = function () {
             deleteClient(id)
         }
     }, minutesToMiliseconds(this.DURATION_MINUTES) / this.maximumNumberOfServings)
+
+    if (timesServed < maxNumbOfServings) {
+        let dishes = 0
+        $.each(actualContainers, function (i, c) {
+            if (maxDishes >= dishes)
+                if (getRndInteger(0, 100) <= c.actual_status.dish.category.probability) {
+                    makeConsume(c.actual_status.id, getRndDouble(0.05, c.actual_status.dish.category.portion).toFixed(3))
+                    dishes++
+                }
+        })
+        timesServed++
+        console.log('times served : ' + timesServed);
+    } else {
+        console.log('Cliente eliminado : ' + id);
+        clearInterval(interval)
+        deleteClient(id)
+    }
+    
     return interval
 }
 

@@ -67,16 +67,6 @@ setInterval(getContainers, minutesToMiliseconds(5))
 setInterval(refillContainers, minutesToMiliseconds(2))
 
 
-// data to do configuration
-// =================================
-// 
-let toDate = new Date();
-let optionsToDate = {
-    weekday: 'long'
-};
-var nameOfDay = toDate.toLocaleDateString('es-MX', optionsToDate);
-var rate = get_rate();
-var countPeople = 0; //actual Clients
 
 
 /// =================================
@@ -84,9 +74,9 @@ var countPeople = 0; //actual Clients
 // get data from apis
 var _xmlHttpRequest = new XMLHttpRequest();
 var holiday_api = "http://localhost:80/ecaptainSimulador/apis/hapi.php"
-var island_status_api = "http://142.93.82.45:8000/api/v1/island/status/"
-const API_CONSUME = 'http://142.93.82.45:8000/api/v1/container/consume'
-const API_REFILL = 'http://142.93.82.45:8000/api/v1/container/refill'
+var island_status_api = "http://142.93.82.45/api/v1/island/status/"
+const API_CONSUME = 'http://142.93.82.45/api/v1/container/consume'
+const API_REFILL = 'http://142.93.82.45/api/v1/container/refill'
 
 // main Function.
 function init() {
@@ -122,70 +112,79 @@ function get_info_by_island(id = 1) {
 }
 
 function getNewClients() {
-    const MAX_CLIENTS = 4
-    let todayRateClients = rateOfClientsByDay[moment().isoWeekday()]
-    let todayProbabilityClients = rateOfProbabilityByDay[moment().isoWeekday()]
-
-    if (isHoliday()) {
-        todayProbabilityClients += 20
-        todayRateClients += 1
-    }
 
     let actualHour = moment().format('H.mm')
-    if (actualHour >= 8 && actualHour <= 10) {
-        todayProbabilityClients += 5
-        MINUTES_TO_UPDATE_CLIENTS = 15
-    }
-    else if (actualHour >= 10 && actualHour <= 12) {
-        todayProbabilityClients += 10
-        MINUTES_TO_UPDATE_CLIENTS = 10
-    }
-    else if (actualHour >= 12 && actualHour <= 14) {
-        todayProbabilityClients += 15
-        MINUTES_TO_UPDATE_CLIENTS = 4
-    }
-    else if (actualHour >= 14 && actualHour <= 16) {
-        todayProbabilityClients += 25
-        MINUTES_TO_UPDATE_CLIENTS = 3
-    }
-    else if (actualHour >= 16 && actualHour <= 18) {
-        todayProbabilityClients += 20
-        MINUTES_TO_UPDATE_CLIENTS = 8
-    }
-    else if (actualHour >= 18 && actualHour <= 20) {
-        todayProbabilityClients += 10
-        MINUTES_TO_UPDATE_CLIENTS = 20
-    }
-    else if (actualHour >= 20 && actualHour <= 21.30) {
-        todayProbabilityClients += 5
-        MINUTES_TO_UPDATE_CLIENTS = 25
-    }
-    else {
-        console.log('Fuera del horario de apertura')
-        todayProbabilityClients = 0
-        return false
-    }
+    actualHour = parseFloat(actualHour)
+    if (moment().set({ 'minutes': 0, 'hour': 8 }) <= moment() && moment() <= moment().set({ 'minutes': 0, 'hour': 22 })) {
+        const MAX_CLIENTS = 4
+        let todayRateClients = rateOfClientsByDay[moment().isoWeekday()]
+        let todayProbabilityClients = rateOfProbabilityByDay[moment().isoWeekday()]
 
-    actualProbability = todayProbabilityClients
-    if (isInRange(getRndInteger(0, 100), 0, todayProbabilityClients)) {
-        actualRate = todayRateClients * MAX_CLIENTS
-        let quantityOfNewClients = getRndInteger(1, actualRate)
-        updateStats()
-        if (actualClients.length + quantityOfNewClients <= MAXIMUM_CLIENTS && quantityOfNewClients > 0) {
-            console.log('Quantity of New Clients :' + quantityOfNewClients)
-            let duration = getRndInteger(20, 60)
-
-            if (moment().add(duration, 'minute') <= moment().set({ hour: 22, minute: 0 })) {
-                for (let i = quantityOfNewClients; i > 0; i--) {
-                    actualClients.push(new Client(duration))
-                }
-            }
-            updateStats()
-            return true
-        } else {
-            console.log('New Clients : ' + (actualClients.length + quantityOfNewClients) + 'MAXIMUM_CLIENTS : ' + MAXIMUM_CLIENTS)
-            console.log('No se encuentran los suficientes lugares disponibles');
+        if (isHoliday()) {
+            todayProbabilityClients += 20
+            todayRateClients += 1
         }
+
+        if (actualHour >= 8 && actualHour <= 10) {
+            todayProbabilityClients += 5
+            MINUTES_TO_UPDATE_CLIENTS = 15
+        }
+        else if (actualHour >= 10 && actualHour <= 12) {
+            todayProbabilityClients += 10
+            MINUTES_TO_UPDATE_CLIENTS = 10
+        }
+        else if (actualHour >= 12 && actualHour <= 14) {
+            todayProbabilityClients += 15
+            MINUTES_TO_UPDATE_CLIENTS = 5
+        }
+        else if (actualHour >= 14 && actualHour <= 16) {
+            todayProbabilityClients += 25
+            MINUTES_TO_UPDATE_CLIENTS = 3
+        }
+        else if (actualHour >= 16 && actualHour <= 18) {
+            todayProbabilityClients += 20
+            MINUTES_TO_UPDATE_CLIENTS = 10
+        }
+        else if (actualHour >= 18 && actualHour <= 20) {
+            todayProbabilityClients += 10
+            MINUTES_TO_UPDATE_CLIENTS = 20
+        }
+        else if (actualHour >= 20 && actualHour <= 21.30) {
+            todayProbabilityClients += 5
+            MINUTES_TO_UPDATE_CLIENTS = 25
+        }
+        else {
+            console.log('Fuera del horario de apertura')
+            todayProbabilityClients = 0
+            MINUTES_TO_UPDATE_CLIENTS = 10
+            return false
+        }
+
+        actualProbability = todayProbabilityClients
+        if (isInRange(getRndInteger(0, 100), 0, todayProbabilityClients)) {
+            actualRate = todayRateClients * MAX_CLIENTS
+            let quantityOfNewClients = getRndInteger(1, actualRate)
+            updateStats()
+            if (actualClients.length + quantityOfNewClients <= MAXIMUM_CLIENTS && quantityOfNewClients > 0) {
+                console.log('Quantity of New Clients :' + quantityOfNewClients)
+                let duration = getRndInteger(20, 60)
+
+                if (moment().add(duration, 'minute') <= moment().set({ hour: 22, minute: 0 })) {
+                    for (let i = quantityOfNewClients; i > 0; i--) {
+                        actualClients.push(new Client(duration))
+                    }
+                }
+                updateStats()
+                return true
+            } else {
+                console.log('New Clients : ' + (actualClients.length + quantityOfNewClients) + 'MAXIMUM_CLIENTS : ' + MAXIMUM_CLIENTS)
+                console.log('No se encuentran los suficientes lugares disponibles');
+            }
+        }
+    } else {
+        actualClients = []
+        console.log('Fuera del horario de atencion');
+        fillContainers()
     }
 }
 
@@ -205,127 +204,6 @@ function isHoliday() {
 
     return isHoliday
 }
-
-function get_rate() {
-    var rate = 1;
-    switch (nameOfDay) {
-        case 'domingo':
-            rate = 12;
-            break;
-        case 'lunes':
-            rate = 7;
-            break;
-        case 'martes':
-            rate = 6;
-            break;
-        case 'miércoles':
-            rate = 5;
-            break;
-        case 'jueves':
-            rate = 8;
-            break;
-        case 'viernes':
-            rate = 9;
-            break;
-        case 'sabado':
-            rate = 11;
-            break;
-        default:
-            rate = 1;
-            break;
-    }
-    return rate;
-}
-
-function get_count_people() {
-
-    // 5.3 min = 318000 mili
-    // 25 min = 1500000 mili
-    var hour = toDate.getHours() + '.' + toDate.getMinutes();
-    var addPeople = 0;
-    var rateWithFactos = 0;
-    var ratewithPeople = 0;
-    if (isHoliday())
-        rateBase = rateBase + 7;
-
-    if (hour >= 8.35 && hour <= 8.40)
-        countPeople = 1;
-
-    if (hour >= 8.40 && hour <= 12.00)
-        addPeople = Math.floor(Math.random() * (rate - 1)) + 1;
-    if (hour >= 12.00 && hour <= 14.00) {
-        addPeople = Math.floor(Math.random() * (((rate * 3) + rate) - 1)) + 1;
-        rateWithFactos = get_rate() * 0.20;
-    }
-
-    if (hour >= 14.00 && hour <= 17.00) {
-        addPeople = Math.floor(Math.random() * (((rate * 4) + rate) - 1)) + 1;
-        rateWithFactos = get_rate() * 0.50;
-    }
-    if (hour >= 17.00 && hour <= 20.00) {
-        addPeople = Math.floor(Math.random() * (rate - 1)) + 1;
-        rateWithFactos = get_rate() * 0.80;
-    }
-
-    if (hour >= 20.00 && hour <= 21.45) {
-        addPeople = Math.floor(Math.random() * ((rate / 2) - 1)) + 1;
-        rateWithFactos = get_rate() * 0.13;
-        remove_person();
-    }
-    if (hour >= 21.45 && hour <= 22.00)
-        removeMassivePerson(countPeople);
-
-    if (countPeople >= 90 && countPeople <= 96)
-        ratewithPeople = (rate * 0.20) + rate;
-
-    if (countPeople > 500)
-        addPeople = 0;
-
-    if (MAXIMUM_CLIENTS < countPeople + addPeople)
-        addPeople = 0
-
-    countPeople = countPeople + addPeople;
-
-    document.getElementById('rate').innerHTML = 'Rate Base: ' + rate + '%';
-    document.getElementById('rateWithFactors').innerHTML = 'Rate with Factors: ' + (rateWithFactos + ratewithPeople) + '%';
-    document.getElementById('rateTotal').innerHTML = 'Rate Total: ' + (rate + rateWithFactos + ratewithPeople) + '%';
-    document.getElementById('total_person').innerHTML = 'Total people: ' + countPeople;
-
-    return 'person to sum: ' + addPeople;
-}
-
-function remove_person() {
-    var hour = toDate.getHours() + '.' + toDate.getMinutes();
-    var removePeople = 0;
-    if (hour >= 8.40 && hour <= 12.00)
-        // Math.floor(Math.random() * (max - min)) + min;
-        removePeople = Math.floor(Math.random() * (25 - 15)) + 15;
-    if (hour >= 8.40 && hour <= 12.00)
-        removePeople = Math.floor(Math.random() * (25 - 18)) + 18;
-    if (hour >= 12.00 && hour <= 14.00)
-        removePeople = Math.floor(Math.random() * (35 - 25)) + 25;
-    if (hour >= 14.00 && hour <= 17.00)
-        removePeople = Math.floor(Math.random() * (15 - 10)) + 10;
-    if (hour >= 17.00 && hour <= 20.00)
-        removePeople = Math.floor(Math.random() * (30 - 1)) + 1;
-    if (hour >= 20.00 && hour <= 21.45) {
-        removePeople = countPeople / 4;
-    }
-    if (hour >= 21.45 && hour <= 22.00)
-        removeMassivePerson(countPeople);
-
-    if (countPeople < removePeople)
-        removePeople = countPeople;
-
-    countPeople = countPeople - removePeople;
-    document.getElementById('total_person').innerHTML = 'Total people: ' + countPeople;
-    return 'person to remove: ' + removePeople;
-}
-
-function removeMassivePerson(count) {
-    countPeople = countPeople - count;
-}
-
 
 /*
  */
@@ -397,6 +275,36 @@ function refillContainers() {
     $.each(actualContainers, function (i, c) {
         try {
             if (c.actual_status.actual_weight <= (c.actual_status.capacity * PERCENTAGE_TO_MAKE_REFILL)) {
+                $.ajax({
+                    url: API_REFILL,
+                    async: true,
+                    method: 'POST',
+                    dataType: 'JSON',
+                    success: function (response) {
+                        console.log(response)
+                        if (response[0].STATUS == 0) {
+                            console.log('SE HA REALIZADO UN REFILL AL CONTENEDOR ' + c.id)
+                        } else
+                            console.log('ALGO FALLO AL REALIZAR EL REFILL ' + c.id)
+                    },
+                    data: {
+                        id: c.id
+                    }
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+}
+/**
+ * Fill the containers
+ * @author RowerPulido
+ */
+function fillContainers() {
+    $.each(actualContainers, function (i, c) {
+        try {
+            if (c.actual_status.actual_weight != c.actual_status.capacity) {
                 $.ajax({
                     url: API_REFILL,
                     async: true,
