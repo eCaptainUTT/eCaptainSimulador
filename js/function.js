@@ -1,25 +1,3 @@
-// porcents
-// rate = 100% wihtout holiday // to quantity of consume
-// rate value = 1;
-// rate = 180% with holiday
-// rate value = (value * 1.80) + value.
-// range hour to consume.
-// open - 8:30am
-/* depending on the day of the week */
-// 8:30 - 12:00 ratePorcent = 10%
-// 12:00 - 14:00 ratePorcent = 15%
-// 14:00 - 17:00 ratePorcent = 20%
-// 17:00 - 20:00 ratePorcent = 17%
-// 20:00 - 21:50 ratePorcent = 12%;
-// 22:00 ratePorcent = 0% 
-// close - 22:00
-
-// generate to count of peopel
-// get hour and get day to generate people
-
-/* equation */
-
-
 // 1 k = 1000 g
 // grams by person 
 // carne = 250 - 300g - media = 275g
@@ -30,15 +8,6 @@
 // verduras = 200 - 250g - media = 225g
 // fruta = 400 - 700g - media = 550g
 // helado = 100g
-
-
-// food porcents
-// camaron enchilado = 65%
-// camaron natural = 60%
-// combinacion = 50%
-// camaron empanizado = 45%
-// arroz = 35%
-
 
 // NUMBER OF MAXIMUM CLIENTES
 /**
@@ -69,7 +38,6 @@ setInterval(refillContainers, minutesToMiliseconds(2))
 
 
 
-/// =================================
 
 // get data from apis
 var _xmlHttpRequest = new XMLHttpRequest();
